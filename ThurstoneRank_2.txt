@@ -1,0 +1,43 @@
+# Basic Thurstone ranking model
+
+data{
+	lower = -101
+	upper = 101
+	for (i in 1:nUser){
+		for (j in 1:nItems){
+			ones[i,j] = 1
+		}
+	}
+}
+
+model{
+  # Latent truth
+  for (j in 1:nItems){
+  		mu[j] ~ dunif(-100, 100)
+  		muStar[j] = mu[j] - mean(mu)
+  } 
+  # User expertise
+  for (i in 1:nUser){
+    	sigmaTmp[i] ~ dunif(0, 1)
+    	sigma[i] = sigmaTmp[i]/mean(sigmaTmp)
+  }
+  # Data
+  for (i in 1:nUser){
+	  for (j in 1:nItems){
+			# The mental sample for the ith person and jth item
+			x[i, j] ~ dnorm(muStar[j], 1/sigma[i]^2)
+			# If the item is in position 1 it is bigger than lower
+			# If the item is in any other position it is bigger than the sample for the item ranked immediately before it
+			bounds[i, j, 1] = equals(y[i, j], 1) * lower
+								   + inprod(x[i, 1:nItems], equals(y[i, 1:nItems], y[i, j] - 1))
+			# If the item is in position n it is smaller than upper
+			# If the item is in any other position it is smaller than the sample for the item ranked immediately after it
+			bounds[i, j, 2] = equals(y[i,j], nItems) * upper
+								   + inprod(x[i, 1:nItems], equals(y[i, 1:nItems], y[i, j] + 1))
+			# Censored sampling
+			ones[i,j] ~ dinterval(x[i, j], bounds[i, j, 1:2])
+	  }
+  }
+  # Aggregate ranking
+  yStar = rank(muStar)
+}
