@@ -9,7 +9,9 @@
  
 The MATLAB script `ThurstoneRank_2.m` applies the model to the same datasets from the original paper. It relies on the [trinity](https://github.com/joachimvandekerckhove/trinity) package to connect MATLAB to JAGS.
 
-The results for each dataset are summarized by the plotting functions `tauPerformance.m` and `aggregateScatter.m`, and are provided in the resultsFigures subfolder. These plots take essentially the same form as those in the paper. Note that the aggregateScatter plots order the items according to the Thurstonian order, not the ground truth. These plotting functions use the color pallette provided by `PantoneSpring2015.mat`.
+The results for each dataset are summarized by the plotting functions `tauPerformance.m`, `aggregateScatter.m` and `latentTruth,m`, and are provided in the resultsFigures subfolder. These plots take essentially the same form as those in the paper. Note that the aggregateScatter and latentTruth plots order the items according to the Thurstonian order, not the ground truth. These plotting functions use the color pallette provided by `PantoneSpring2015.mat`.
+
+Also provided is a function `probabilityTable.m` that returns a matrix of pairwise comparisons between the items, giving the probability that the row item is greater than the column item on the criterion. This function also generates a text file with the table in Latex form. 
 
 The data are loaded by the `loadData.m` function, and the same data are also available in the `RankingData.xlsx` spreadsheet.
 
